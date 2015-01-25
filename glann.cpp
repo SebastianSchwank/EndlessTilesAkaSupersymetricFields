@@ -6,8 +6,8 @@ GLANN::GLANN(unsigned int renderPasses, Scene *renderScene,
       : QGLWidget(parent, shareWidget)
 {
     QScreen *screen = QApplication::screens().at(0);
-    int width = 512;//screen->size().width();
-    int height = 512;//screen->size().height();
+    int width = 256;//screen->size().width();
+    int height = 256;//screen->size().height();
 
     //qDebug() << width << height << "------------------ WIDTH , HEIGHT";
 
@@ -158,23 +158,26 @@ void GLANN::calcForces(){
 
             if( i != j ){
 
-                float dx = 0.0;
-                float dy = 0.0;
+                double Fx = 0.0;
+                double Fy = 0.0;
 
                 for(int xRep = (-(int)mApprox/2); xRep < ((int)(mApprox/2)); xRep++){
                     for(int yRep = (-(int)mApprox/2); yRep < ((int)(mApprox/2)); yRep++){
 
                         //qDebug() << xRep << yRep;
+                        double dx = - (mScene->mSceneP[j].getPosX() + xRep) + (mScene->mSceneP[i].getPosX());
+                        double dy = - (mScene->mSceneP[j].getPosY() + yRep) + (mScene->mSceneP[i].getPosY());
 
-                        dx += (mScene->mSceneP[j].getPosX() + xRep) - (mScene->mSceneP[i].getPosX());
-                        dy += (mScene->mSceneP[j].getPosY() + yRep) - (mScene->mSceneP[i].getPosY());
+                        double dDist = sqrt(dx*dx+dy*dy);
+
+                        Fx += dx/(dDist*dDist*dDist);
+                        Fy += dy/(dDist*dDist*dDist);
 
                     }
                 }
 
-                float dDist = sqrt(dx*dx+dy*dy);
-                mScene->mSceneP[i].velX +=  dx * 10.0/(dDist*dDist*dDist) ;//1.0/d;
-                mScene->mSceneP[i].velY +=  dy * 10.0/(dDist*dDist*dDist) ;//1.0/d;
+                mScene->mSceneP[i].velX += Fx * 0.0001;//1.0/d;
+                mScene->mSceneP[i].velY += Fy * 0.0001;//1.0/d;
 
             }
         }
@@ -183,8 +186,8 @@ void GLANN::calcForces(){
     //damping
 
     for(int i = 0; i < mScene->mSceneP.size(); i++){
-        mScene->mSceneP[i].velX = mScene->mSceneP[i].velX/1.01f;
-        mScene->mSceneP[i].velY = mScene->mSceneP[i].velY/1.01f;
+        mScene->mSceneP[i].velX = mScene->mSceneP[i].velX/1.1f;
+        mScene->mSceneP[i].velY = mScene->mSceneP[i].velY/1.1f;
     }
 
 

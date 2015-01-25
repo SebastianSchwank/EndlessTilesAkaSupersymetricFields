@@ -68,14 +68,12 @@ void main()
         }
 
         renderedImagePixel = 0.5*(normalize(pixelColor)+vec4(1.0,1.0,0.0,1.0));
-        renderedImagePixel = vec4(renderedImagePixel.r,renderedImagePixel.g,
-                                  10.0*dist/(mirroredX*mirroredY),1.0);
-
+/*
         float epsilon = 0.001;
         for(float z = 0; z < 10.0; z += 0.005){
             if(z < dist/(mirroredX*mirroredY)+epsilon && z >= dist/(mirroredX*mirroredY)) renderedImagePixel = vec4(0.0,0.0,0.0,0.0);
         }
-
+*/
     }
 
 
