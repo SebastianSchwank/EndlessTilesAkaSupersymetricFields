@@ -12,7 +12,6 @@ public:
     unsigned int getAttributeAsPixel(int i);
     static int getSize();
     void setPos(float x, float y);
-    float getCharge();
     float getPosX();
     float getPosY();
 

@@ -49,7 +49,7 @@ void main()
         for(int i = 0; i < numParticles; i++){
             float xP = unpack(texelFetch(Particles,vec2(float(i),3.0),ivec2(numParticles,numParametersP)));
             float yP = unpack(texelFetch(Particles,vec2(float(i),2.0),ivec2(numParticles,numParametersP)));
-            float charge = 1.0-2.0*unpack(texelFetch(Particles,vec2(float(i),1.0),ivec2(numParticles,numParametersP)));
+            float charge = unpack(texelFetch(Particles,vec2(float(i),1.0),ivec2(numParticles,numParametersP)));
 
 
             for(int x = -mirroredX/2; x < mirroredX/2; x++){
@@ -57,10 +57,10 @@ void main()
                     vec4  color = vec4(((x+xP)-pos.x),((y+yP)-pos.y),0.0,0.0);
                     //float dist = length(color);
                     float d = length(color);
-                    color = color / (d*d*d);
+                    color = charge * color / (d*d*d);
                     dist += 1.0/(d*d*d);
 
-                    pixelColor += color * charge;
+                    pixelColor += color;
                 }
             }
 
@@ -68,12 +68,12 @@ void main()
         }
 
         renderedImagePixel = 0.5*(normalize(pixelColor)+vec4(1.0,1.0,0.0,1.0));
-/*
+
         float epsilon = 0.001;
         for(float z = 0; z < 10.0; z += 0.005){
             if(z < dist/(mirroredX*mirroredY)+epsilon && z >= dist/(mirroredX*mirroredY)) renderedImagePixel = vec4(0.0,0.0,0.0,0.0);
         }
-*/
+
     }
 
 
