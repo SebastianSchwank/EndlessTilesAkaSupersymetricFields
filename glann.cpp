@@ -22,12 +22,12 @@ GLANN::GLANN(unsigned int renderPasses, Scene *renderScene,
     SceneImageParticles = mScene->getSceneImageParticles();
     SceneImageLines = mScene->getSceneImageLines();
 
-/*
+
     for(int i = 0; i < mScene->mSceneP.size(); i++){
         mScene->mSceneP[i].velX = 0.01 * (1.0f-2.0f*qrand()/RAND_MAX);
         mScene->mSceneP[i].velY = 0.01 * (1.0f-2.0f*qrand()/RAND_MAX);
     }
-*/
+
     this->TexWidth = SceneImageParticles.width();
     this->TexHeight = SceneImageParticles.height();
 

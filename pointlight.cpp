@@ -34,6 +34,10 @@ float PointLight::getPosY(){
     return mData[1]/4294967295.0;
 }
 
+float PointLight::getCharge(){
+    return 1.0f - mData[2]/2147483647.5;
+}
+
 void PointLight::setPos(float x, float y){
     FloatBits UintRgba;
 
