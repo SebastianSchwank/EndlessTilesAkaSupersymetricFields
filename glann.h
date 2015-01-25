@@ -94,9 +94,9 @@ private:
     unsigned int mNumFrames = 0;
     unsigned int samples = 4;
     //----------------------
-    unsigned int mApprox = 24;
-    unsigned int numTiles = 2;
-    float zOOm = 2.0;
+    unsigned int mApprox = 32;
+    unsigned int numTiles = 3;
+    float zOOm = 3.0;
 
     unsigned int mLightIndexClicked;
     float flMouseX,flMouseY;

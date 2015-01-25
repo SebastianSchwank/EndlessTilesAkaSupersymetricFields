@@ -22,11 +22,12 @@ GLANN::GLANN(unsigned int renderPasses, Scene *renderScene,
     SceneImageParticles = mScene->getSceneImageParticles();
     SceneImageLines = mScene->getSceneImageLines();
 
+/*
     for(int i = 0; i < mScene->mSceneP.size(); i++){
-        mScene->mSceneP[i].velX = 0.001 * (1.0f-2.0f*qrand()/RAND_MAX);
-        mScene->mSceneP[i].velY = 0.001 * (1.0f-2.0f*qrand()/RAND_MAX);
+        mScene->mSceneP[i].velX = 0.01 * (1.0f-2.0f*qrand()/RAND_MAX);
+        mScene->mSceneP[i].velY = 0.01 * (1.0f-2.0f*qrand()/RAND_MAX);
     }
-
+*/
     this->TexWidth = SceneImageParticles.width();
     this->TexHeight = SceneImageParticles.height();
 
@@ -143,7 +144,7 @@ void GLANN::paintGL(){
 
 
     render();
-    //calcForces();
+    calcForces();
 
     //increment number of rendered frames
     mNumFrames++;
@@ -153,29 +154,54 @@ void GLANN::calcForces(){
 
     for(int i = 0; i < mScene->mSceneP.size(); i++){
         for(int j = 0; j < mScene->mSceneP.size(); j++){
-            float dx = mScene->mSceneP[j].getPosX() - mScene->mSceneP[i].getPosX();
-            float dy = mScene->mSceneP[j].getPosY() - mScene->mSceneP[i].getPosY();
-            dx += dx + (1-dx);
-            float d = sqrt(dx*dx+dy*dy);
 
-            mScene->mSceneP[i].velX += 0.0003 * dx  ;//1.0/d;
-            mScene->mSceneP[i].velY += 0.0003 * dy  ;//1.0/d;
+
+            if( i != j ){
+
+                float dx = 0.0;
+                float dy = 0.0;
+
+                for(int xRep = (-(int)mApprox/2); xRep < ((int)(mApprox/2)); xRep++){
+                    for(int yRep = (-(int)mApprox/2); yRep < ((int)(mApprox/2)); yRep++){
+
+                        //qDebug() << xRep << yRep;
+
+                        dx += (mScene->mSceneP[j].getPosX() + xRep) - (mScene->mSceneP[i].getPosX());
+                        dy += (mScene->mSceneP[j].getPosY() + yRep) - (mScene->mSceneP[i].getPosY());
+
+                    }
+                }
+
+                float dDist = sqrt(dx*dx+dy*dy);
+                mScene->mSceneP[i].velX +=  dx * 10.0/(dDist*dDist*dDist) ;//1.0/d;
+                mScene->mSceneP[i].velY +=  dy * 10.0/(dDist*dDist*dDist) ;//1.0/d;
+
+            }
         }
     }
+
+    //damping
+
+    for(int i = 0; i < mScene->mSceneP.size(); i++){
+        mScene->mSceneP[i].velX = mScene->mSceneP[i].velX/1.01f;
+        mScene->mSceneP[i].velY = mScene->mSceneP[i].velY/1.01f;
+    }
+
+
 
     for(int i = 0; i < mScene->mSceneP.size(); i++)
     mScene->mSceneP[i].setPos(mScene->mSceneP[i].getPosX()+mScene->mSceneP[i].velX,
                               mScene->mSceneP[i].getPosY()+mScene->mSceneP[i].velY);
 
     SceneImageParticles = mScene->getSceneImageParticles();
-    SceneImageLines = mScene->getSceneImageLines();
+    //SceneImageLines = mScene->getSceneImageLines();
 
-    glDeleteTextures(1,&pixelsSceneLines);
+    //glDeleteTextures(1,&pixelsSceneLines);
     glDeleteTextures(1,&pixelsSceneParticels);
 
     //Bind Scene
     pixelsSceneParticels = QGLWidget::bindTexture(SceneImageParticles);
-    pixelsSceneLines = QGLWidget::bindTexture(SceneImageLines);
+    //pixelsSceneLines = QGLWidget::bindTexture(SceneImageLines);
 }
 
 void GLANN::render(){

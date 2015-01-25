@@ -44,12 +44,13 @@ void main()
         vec4 pixelColor = vec4(0.0,0.0,0.0,0.0);
 
         vec2 pos = vec2(v_texcoord.x,v_texcoord.y) ;
-        float dist = 0;
+        float dist = 0.0;
 
         for(int i = 0; i < numParticles; i++){
             float xP = unpack(texelFetch(Particles,vec2(float(i),3.0),ivec2(numParticles,numParametersP)));
             float yP = unpack(texelFetch(Particles,vec2(float(i),2.0),ivec2(numParticles,numParametersP)));
             float brightness = unpack(texelFetch(Particles,vec2(float(i),1.0),ivec2(numParticles,numParametersP)));
+
 
             for(int x = -mirroredX/2; x < mirroredX/2; x++){
                 for(int y = -mirroredY/2; y < mirroredY/2; y++){
@@ -57,13 +58,24 @@ void main()
                     //float dist = length(color);
                     float d = length(color);
                     color = color / (d*d*d);
+                    dist += 1.0/(d*d*d);
 
                     pixelColor += color;
                 }
             }
+
+            if(sqrt((xP-pos.x)*(xP-pos.x)+(yP-pos.y)*(yP-pos.y)) < 0.01) pixelColor = vec4(1.0,0.0,0.0,1.0);
         }
 
         renderedImagePixel = 0.5*(normalize(pixelColor)+vec4(1.0,1.0,0.0,1.0));
+        renderedImagePixel = vec4(renderedImagePixel.r,renderedImagePixel.g,
+                                  10.0*dist/(mirroredX*mirroredY),1.0);
+
+        float epsilon = 0.001;
+        for(float z = 0; z < 10.0; z += 0.005){
+            if(z < dist/(mirroredX*mirroredY)+epsilon && z >= dist/(mirroredX*mirroredY)) renderedImagePixel = vec4(0.0,0.0,0.0,0.0);
+        }
+
     }
 
 
